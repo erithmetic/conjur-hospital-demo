@@ -1,29 +1,26 @@
-# Conjurer
+# Conjur Demo
 
-TODO: Write a gem description
+This demo demonstrates how the conjur CLI is used to set up a sample permissions model for a hospital. 
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Clone this repo:
 
-    gem 'conjurer'
+    $ git clone http://github.com/conjurinc/conjr-demo.git
+    $ cd conjr-demo
 
-And then execute:
+Install the gems:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install conjurer
+Configure your Conjur credentials according to [http://developer.conjur.net/guides/client-install.html](http://developer.conjur.net/guides/client-install.html)
 
 ## Usage
 
-TODO: Write usage instructions here
+The script is demonstrated by a series of cucumber features. After your Conjur
+credentials are configured, run:
 
-## Contributing
+    $ cucumber
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+You will see a series of actions run that verify the permissions are set up
+correctly.
