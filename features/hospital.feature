@@ -103,3 +103,31 @@ Feature: Setting up roles for a hospital
   Scenario: Nurse Brenda can log in
     When I run `conjur asset:show user:$NS/brenda`
     Then the json output should have attribute "login" with value "$NS/brenda"
+
+  Scenario: Doctor Gregory can view Alice's medical history and prescriptions
+    When I run `conjur resource:check -r user:$NS/gregory variable:$ALICE_PRESCRIPTION_LIST_ID execute`
+    Then the output should be "true"
+
+    When I run `conjur resource:check -r user:$NS/gregory variable:$ALICE_MEDICAL_HISTORY_ID execute`
+    Then the output should be "true"
+
+  Scenario: Doctor James can view Bob's medical history and prescriptions
+    When I run `conjur resource:check -r user:$NS/james variable:$BOB_PRESCRIPTION_LIST_ID execute`
+    Then the output should be "true"
+
+    When I run `conjur resource:check -r user:$NS/james variable:$BOB_MEDICAL_HISTORY_ID execute`
+    Then the output should be "true"
+
+  Scenario: Doctor Gregory cannot view Bob's medical history and prescriptions
+    When I run `conjur resource:check -r user:$NS/gregory variable:$BOB_PRESCRIPTION_LIST_ID execute`
+    Then the output should be "false"
+
+    When I run `conjur resource:check -r user:$NS/gregory variable:$BOB_MEDICAL_HISTORY_ID execute`
+    Then the output should be "false"
+
+  Scenario: Doctor James cannot view Alice's medical history and prescriptions
+    When I run `conjur resource:check -r user:$NS/james variable:$ALICE_PRESCRIPTION_LIST_ID execute`
+    Then the output should be "false"
+
+    When I run `conjur resource:check -r user:$NS/james variable:$ALICE_MEDICAL_HISTORY_ID execute`
+    Then the output should be "false"

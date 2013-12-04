@@ -45,3 +45,7 @@ end
 Then %r{the json output should have attribute "(.*)" with value "(.*)"} do |name, value|
   last_command_data[name].should == interpolate_namespace(value)
 end
+
+Then %r{the output should be "(.*)"} do |text|
+  last_command_output.should =~ /#{text}/
+end
