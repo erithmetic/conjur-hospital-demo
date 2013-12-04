@@ -2,6 +2,8 @@ require 'aruba/api'
 require 'aruba/cucumber/hooks'
 require 'aruba/reporting'
 
+require 'json'
+
 World(Aruba::Api)
 
 Before do
@@ -14,4 +16,8 @@ end
 
 def last_command_output
   last_command.output.rstrip
+end
+
+def last_command_data
+  JSON.parse last_command_output
 end
