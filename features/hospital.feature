@@ -3,7 +3,7 @@ Feature: Setting up roles for a hospital
   I want to create several roles and users for doctors, patients, and nurses
   So that I can protect patient data
 
-  Background:
+  Scenario: Setting up permissions model
     # A hospital has patients, doctors, and nurses.
     #
     # Doctors and nurses have identities and can log in.
@@ -28,15 +28,14 @@ Feature: Setting up roles for a hospital
     # Create roles
     When I run `conjur role:create $NS:doctor`
     And  I run `conjur role:create $NS:nurse`
-    And  I run `conjur role:create $NS:patient`
 
     # Create doctors as users
-    When I run `conjur user:create --as-role $NS:doctor $NS/gregory` interactively
-    When I run `conjur user:create --as-role $NS:doctor $NS/james` interactively
+    When I run `conjur user:create --as-role $NS:doctor $NS/gregory`
+    When I run `conjur user:create --as-role $NS:doctor $NS/james`
 
     # Create nurses as users
-    When I run `conjur user:create --as-role $NS:nurse $NS/brenda` interactively
-    When I run `conjur user:create --as-role $NS:nurse $NS/regina` interactively
+    When I run `conjur user:create --as-role $NS:nurse $NS/brenda`
+    When I run `conjur user:create --as-role $NS:nurse $NS/regina`
 
     # Create patient data
     When I run `conjur variable:create -k medical_history -m application/json`
@@ -85,7 +84,17 @@ Feature: Setting up roles for a hospital
       ["superdrug"]
       """
 
-    # Allow Doctor Gregory to manage Alice's patient data
+    # Allow Doctor Gregory to view all of Alice's patient data
+    When I run `conjur resource:permit variable:$ALICE_PRESCRIPTION_LIST_ID user:$NS/gregory execute`
+    And  I run `conjur resource:permit variable:$ALICE_MEDICAL_HISTORY_ID user:$NS/gregory execute`
+
+    # Allow Doctor James to view all of Bob's patient data
+    When I run `conjur resource:permit variable:$BOB_PRESCRIPTION_LIST_ID user:$NS/james execute`
+    And  I run `conjur resource:permit variable:$BOB_MEDICAL_HISTORY_ID user:$NS/james execute`
+
+    # Allow all nurses to view every patient's prescription data
+    When I run `conjur resource:permit variable:$ALICE_PRESCRIPTION_LIST_ID $NS:nurse execute`
+    When I run `conjur resource:permit variable:$BOB_PRESCRIPTION_LIST_ID $NS:nurse execute`
 
   Scenario: Doctor James can log in
     When I run `conjur asset:show user:$NS/james`
