@@ -94,7 +94,7 @@ Feature: Setting up roles for a hospital
 
     # Allow all nurses to view every patient's prescription data
     When I run `conjur resource:permit variable:$ALICE_PRESCRIPTION_LIST_ID $NS:nurse execute`
-    When I run `conjur resource:permit variable:$BOB_PRESCRIPTION_LIST_ID $NS:nurse execute`
+    And I run `conjur resource:permit variable:$BOB_PRESCRIPTION_LIST_ID $NS:nurse execute`
 
   Scenario: Doctor James can log in
     When I run `conjur asset:show user:$NS/james`
@@ -130,4 +130,26 @@ Feature: Setting up roles for a hospital
     Then the output should be "false"
 
     When I run `conjur resource:check -r user:$NS/james variable:$ALICE_MEDICAL_HISTORY_ID execute`
+    Then the output should be "false"
+
+  Scenario: Nurses can view Alice and Bob's prescriptions
+    When I run `conjur resource:check -r $NS:nurse variable:$ALICE_PRESCRIPTION_LIST_ID execute`
+    Then the output should be "true"
+    When I run `conjur resource:check -r $NS:nurse variable:$ALICE_PRESCRIPTION_LIST_ID execute`
+    Then the output should be "true"
+
+    When I run `conjur resource:check -r $NS:nurse variable:$BOB_PRESCRIPTION_LIST_ID execute`
+    Then the output should be "true"
+    When I run `conjur resource:check -r $NS:nurse variable:$BOB_PRESCRIPTION_LIST_ID execute`
+    Then the output should be "true"
+
+  Scenario: Nurses cannot view Alice and Bob's medical history
+    When I run `conjur resource:check -r $NS:nurse variable:$ALICE_MEDICAL_HISTORY_ID execute`
+    Then the output should be "false"
+    When I run `conjur resource:check -r $NS:nurse variable:$ALICE_MEDICAL_HISTORY_ID execute`
+    Then the output should be "false"
+
+    When I run `conjur resource:check -r $NS:nurse variable:$BOB_MEDICAL_HISTORY_ID execute`
+    Then the output should be "false"
+    When I run `conjur resource:check -r $NS:nurse variable:$BOB_MEDICAL_HISTORY_ID execute`
     Then the output should be "false"
